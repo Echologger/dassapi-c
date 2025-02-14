@@ -5,7 +5,7 @@
 
 int main()
 {
-    pSnrCtx snrctx = DASS710Open("\\\\.\\COM2", 115200U);
+    pSnrCtx snrctx = DASS710Open("\\\\.\\COM12", 115200U);
     int result = 0;
 
     if (NULL != snrctx)
