@@ -25,8 +25,8 @@ Build tools
 
 Build command for Linux:
 
-    git clone --recursive https://github.com/Echologger/DASSapi-c.git
-    cd DASSapi-c
+    git clone --recursive https://github.com/Echologger/dassapi-c.git
+    cd dassapi-c
     mkdir build
     cd build
     cmake ..
@@ -35,8 +35,8 @@ Build command for Linux:
 
     // or build using Ninja
     
-    git clone --recursive https://github.com/Echologger/DASSapi-c.git
-    cd DASSapi-c
+    git clone --recursive https://github.com/Echologger/dassapi-c.git
+    cd dassapi-c
     mkdir build
     cd build
     cmake -GNinja ..
@@ -44,8 +44,8 @@ Build command for Linux:
     
 Build command for Windows:
 
-    git clone --recursive https://github.com/Echologger/DASSapi-c.git
-    cd DASSapi-c
+    git clone --recursive https://github.com/Echologger/dassapi-c.git
+    cd dassapi-c
     mkdir build
     cd build
     cmake ..
@@ -70,37 +70,40 @@ Using example:
             
             if(true == is_detected)
             {
-                printf("Sonar detected\n");
+                printf("Dass detected\n");
 
-                EchosounderValue testvalue;
+                DASSValue testvalue;
 
-                EchosounderSetCurrentTime(snrctx);
+                // Time setting
+                DASSSetCurrentTime(snrctx);
+                FloatToDASSValue(14.0F, &testvalue);
 
-                FloatToEchosounderValue(14.0F, &testvalue);
-                printf("Set IdTVGSprdH. Result must be -1 for single frequency echosounder\n");
-                int result = EchosounderSetValue(snrctx, IdTVGSprdH, &testvalue);
-                printf("result = %d\n", result);
+                // Range Setting
+                LongToDASSValue(10000, &testvalue);
+                DASSSetValue(snrctx, IdRange, &testvalue);
 
-                printf("Set IdTVGSprd. Result must be 0 for single frequency echosounder\n");
-                FloatToEchosounderValue(10.0F, &testvalue); // Set TVG spreading value
-                result = EchosounderSetValue(snrctx, IdTVGSprd, &testvalue);
-                printf("result = %d\n", result);
+                // Output Setting
+                LongToDASSValue(110, &testvalue);
+                DASSSetValue(snrctx, IdOutput, &testvalue);
 
-                LongToEchosounderValue(10000, &testvalue);
-                EchosounderSetValue(snrctx, IdRange, &testvalue); // Set #range value
+                // Output Type Setting
+                LongToDASSValue(0, &testvalue);
+                DASSSetValue(snrctx, IdDmode, &testvalue);
 
-                LongToEchosounderValue(3, &testvalue);
-                EchosounderSetValue(snrctx, IdOutput, &testvalue); // Set #output value
+                // Stepping Setting
+                LongToDASSValue(10, &testvalue);
+                DASSSetValue(snrctx, IdHstep, &testvalue);
+                LongToDASSValue(10, &testvalue);
+                DASSSetValue(snrctx, IdVstep, &testvalue);
 
-                printf("Start Echosounder\n");
-                EchosounderStart(snrctx);
-                printf("Echosounder Is Running? -> %d\n", EchosounderIsRunning(snrctx));
+                // Sector Setting
+                LongToDASSValue(0, &testvalue);
+                DASSSetValue(snrctx, IdSector, &testvalue);        
 
-                printf("Get IdTVGSprd. Result must be 10.0 for single frequency echosounder\n");
-                EchosounderGetValue(snrctx, IdTVGSprd, &testvalue);
-                printf("tgvsprd => %.1f\n", EchosounderValueToFloat(&testvalue));
-
-                printf("Receiving 1kB NMEA Data.\n");
+                DASSStart(snrctx);
+                printf("DASS Is Running? -> %d\n", DASSIsRunning(snrctx));
+        
+                printf("Receiving 2kB Simple Data.\n");
 
                 size_t totalbytes = 0;
 
@@ -123,7 +126,7 @@ Using example:
             }
             else
             {
-                printf("Sonar is not detected\n");
+                printf("DASS is not detected\n");
             }
 
             DASSClose(snrctx); // Close DASS's serial port
